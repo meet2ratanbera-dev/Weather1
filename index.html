@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyline — Live Weather</title>
+  <meta name="description" content="A live weather report that turns the sky itself into the interface — current conditions, a 7-day forecast, and a background that shifts with the real weather." />
+
+  <!-- Google Fonts: Space Grotesk for numerals/headings, Manrope for body & UI text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<!--
+  data-sky drives the whole visual theme (see styles.css). It is set by script.js
+  once real weather data arrives; "clear-day" is just a sensible first paint.
+  data-motion is flipped to "off" automatically when the visitor's OS asks for
+  reduced motion, and ambient/entrance animations key off it.
+-->
+<body data-sky="clear-day" data-glass="light" data-motion="on">
+
+  <!-- ============================================================
+       LIVING SKY — purely decorative background scene. Everything
+       in here is aria-hidden; it never carries information on its
+       own, it only illustrates the real numbers rendered below.
+  ============================================================= -->
+  <div class="sky" aria-hidden="true">
+    <canvas id="precip-canvas"></canvas>
+    <div class="sky__stars" id="sky-stars"></div>
+    <div class="sky__sun"></div>
+    <svg class="sky__moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M13.2 2.3a9.7 9.7 0 1 0 8.5 14.6 8.2 8.2 0 0 1-8.5-14.6z" />
+    </svg>
+    <div class="sky__cloud sky__cloud--1"></div>
+    <div class="sky__cloud sky__cloud--2"></div>
+    <div class="sky__cloud sky__cloud--3"></div>
+    <div class="sky__fog"></div>
+    <div class="sky__flash" id="sky-flash"></div>
+    <div class="sky__scrim"></div>
+  </div>
+
+  <div class="page">
+
+    <header class="header">
+      <p class="header__brand">Skyline</p>
+
+      <!-- Location search: a combobox restricted to picking a real, geocoded place -->
+      <div class="search">
+        <label for="search-input" class="visually-hidden">Search for a place</label>
+        <div class="search__field">
+          <svg class="search__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8" />
+            <line x1="16" y1="16" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            class="search__input"
+            placeholder="Search a place"
+            autocomplete="off"
+            spellcheck="false"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="search-list"
+            aria-autocomplete="list"
+          />
+        </div>
+        <ul id="search-list" class="search__list" role="listbox" hidden></ul>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============================================================
+           HERO — current conditions for whatever place is active.
+      ============================================================= -->
+      <section class="hero" aria-live="polite">
+        <p class="hero__status" id="status-message" role="status" hidden></p>
+
+        <div class="hero__content" id="hero-content">
+          <p class="hero__condition" id="condition-text">Reading the sky</p>
+          <h1 class="hero__location" id="location-text">Finding your location…</h1>
+
+          <p class="hero__temp">
+            <span id="temp-value">--</span><span class="hero__unit">°C</span>
+          </p>
+
+          <div class="hero__stats" id="hero-stats">
+            <div class="stat">
+              <span class="stat__label">Feels like</span>
+              <span class="stat__value" id="feels-like">--°</span>
+            </div>
+            <div class="stat">
+              <span class="stat__label">Humidity</span>
+              <span class="stat__value" id="humidity">--%</span>
+            </div>
+            <div class="stat">
+              <span class="stat__label">Wind</span>
+              <span class="stat__value" id="wind">-- km/h</span>
+            </div>
+            <div class="stat">
+              <span class="stat__label">UV index</span>
+              <span class="stat__value" id="uv-index">--</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           FORECAST — 7 days, in order, always shown as a real sequence.
+      ============================================================= -->
+      <section class="forecast" aria-labelledby="forecast-heading">
+        <h2 class="forecast__heading" id="forecast-heading">Next 7 days</h2>
+        <ul class="forecast__list" id="forecast-list">
+          <!-- script.js fills this with 7 <li class="forecast-card"> -->
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Weather data from <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>.
+        Place lookup by <a href="https://www.bigdatacloud.com" target="_blank" rel="noopener">BigDataCloud</a>.
+      </p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
